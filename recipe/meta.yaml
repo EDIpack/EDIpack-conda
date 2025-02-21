@@ -1,0 +1,44 @@
+package:
+  name: edipack
+  version: "2.0"
+
+source:
+  git_url: https://github.com/EDIpack/EDIpack2.0.git
+
+requirements:
+  build:
+    - pkg-config
+    - cmake
+    - make
+    - ninja
+    - meson
+    - meson-python 
+    - {{ compiler('c') }}
+    - {{ compiler('fortran') }}
+    - openmpi=4.1.5
+    - libgfortran-ng=13
+    - mpi
+  host:
+    - python
+    - meson-python 
+    - pip
+    - numpy
+    - mpi4py
+    - mkl
+    - mkl-devel
+    - mkl-include
+  run:
+    - python
+    - numpy
+    - mpi4py
+    - mkl
+
+about:
+  home: https://github.com/EDIpack/EDIpack2.0
+  license: MIT
+  summary: "EDIpack - Fortran library for electronic structure calculations"
+  description: |
+    EDIpack is a library for electronic structure calculations,
+    requiring SciFortran and various numerical libraries.
+  dev_url: https://github.com/EDIpack/EDIpack2.0
+
