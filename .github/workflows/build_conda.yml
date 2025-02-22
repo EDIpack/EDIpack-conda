@@ -31,7 +31,7 @@ jobs:
 
       - name: Create and activate build environment
         run: |
-          conda create -n build-env python=${{ matrix.python-version }} conda-build py-lief<=0.14 anaconda-client -y
+          conda create -n build-env python=${{ matrix.python-version }} conda-build "py-lief<=0.14" anaconda-client -y
           echo "CONDA_ENV=build-env" >> $GITHUB_ENV
 
       - name: Build Conda Package
