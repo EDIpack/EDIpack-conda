@@ -27,38 +27,29 @@ jobs:
           auto-update-conda: true
           channels: conda-forge
           python-version: 3.12
-          #miniforge-version: "latest"
+        #miniforge-version: "latest"
 
       - name: Install build dependencies
-        run: |
-          conda install -y conda-build=25.1.2 anaconda-client
-          conda list anaconda-client  # Verify installation
-          which anaconda  # Check if 'anaconda' is available
-          $CONDA_PREFIX/bin/anaconda login --username lcrippa
-
-      - name: Configure Conda for Auto Upload
-        run: |
-          conda config --set anaconda_upload yes
-          conda config --show | grep anaconda_upload  # Verify setting
+        run: conda install -y conda-build anaconda-client
 
       - name: Build Conda Package
         id: build
         run: |
           # Build using the output folder and override the Python variant to the one in the matrix
           VARIANT="{python: [${{ matrix.python-version }}]}"
-          conda build -c conda-forge recipe/ --output-folder output --variants "$VARIANT"
+          #conda build -c conda-forge recipe/ --output-folder output --variants "$VARIANT"
           # Get the path to the built package from the output folder
-          #BUILT_PKG=$(conda build -c conda-forge recipe/ --output-folder output --variants "$VARIANT" --output)
-          #echo "Built package: ${BUILT_PKG}"
-          #echo "BUILT_PKG=${BUILT_PKG}" >> $GITHUB_ENV
+          BUILT_PKG=$(conda build -c conda-forge recipe/ --output-folder output --variants "$VARIANT" --output)
+          echo "Built package: ${BUILT_PKG}"
+          echo "BUILT_PKG=${BUILT_PKG}" >> $GITHUB_ENV
 
-      #- name: Upload package to Anaconda
-      #  shell: "bash -l {0}"
-      #  run: |
-      #    conda init bash
-      #    source ~/.bashrc
-      #    conda activate base
-      #    conda install -y conda-build anaconda-client
-      #    echo "Uploading ${BUILT_PKG} to Anaconda..."
-      #    anaconda upload --user lcrippa "${BUILT_PKG}"
-      #  continue-on-error: true
+      - name: Upload package to Anaconda
+        shell: "bash -l {0}"
+        run: |
+          conda init bash
+          source ~/.bashrc
+          conda activate base
+          conda install -y conda-build anaconda-client
+          echo "Uploading ${BUILT_PKG} to Anaconda..."
+          anaconda upload --user lcrippa "${BUILT_PKG}"
+        continue-on-error: true
