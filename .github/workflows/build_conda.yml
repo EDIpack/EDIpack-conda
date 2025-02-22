@@ -37,5 +37,7 @@ jobs:
 
       - name: Upload package to Anaconda
         run: |
+          conda activate base
           echo "Uploading ${BUILT_PKG} to Anaconda..."
           anaconda upload --user lcrippa "${BUILT_PKG}"
+          continue-on-error: true
