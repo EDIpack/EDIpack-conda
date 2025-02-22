@@ -26,7 +26,7 @@ jobs:
         with:
           auto-update-conda: true
           channels: conda-forge
-          python-version: 3.12
+          python-version: 3.11
         #miniforge-version: "latest"
 
       - name: Install build dependencies
@@ -37,7 +37,7 @@ jobs:
         run: |
           # Build using the output folder and override the Python variant to the one in the matrix
           VARIANT="{python: [${{ matrix.python-version }}]}"
-          #conda build -c conda-forge recipe/ --output-folder output --variants "$VARIANT"
+          conda build -c conda-forge recipe/ --output-folder output --variants "$VARIANT"
           # Get the path to the built package from the output folder
           BUILT_PKG=$(conda build -c conda-forge recipe/ --output-folder output --variants "$VARIANT" --output)
           echo "Built package: ${BUILT_PKG}"
