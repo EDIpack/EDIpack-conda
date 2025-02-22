@@ -31,7 +31,7 @@ jobs:
         run: |
           conda build -c conda-forge recipe/ --output-folder output
           # Get the path to the built package
-          BUILT_PKG=$(conda build -c conda-forge recipe/ --output)
+          BUILT_PKG=$(conda build -c conda-forge recipe/ --output-folder output --output)
           echo "Built package: ${BUILT_PKG}"
           echo "BUILT_PKG=${BUILT_PKG}" >> $GITHUB_ENV
 
