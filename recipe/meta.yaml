@@ -32,6 +32,7 @@ requirements:
     - numpy
     - mpi4py
     - mkl
+    - openmpi
 
 about:
   home: https://github.com/EDIpack/EDIpack2.0
