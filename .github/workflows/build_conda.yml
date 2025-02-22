@@ -26,12 +26,12 @@ jobs:
         with:
           auto-update-conda: true
           channels: conda-forge
-          python-version: 3.12
+          python-version: ${{ matrix.python-version }}
         #miniforge-version: "latest"
 
-      - name: Create and activate build environment  # 🔹 New step
+      - name: Create and activate build environment
         run: |
-          conda create -n build-env python=${{ matrix.python-version }} conda-build anaconda-client -y
+          conda create -n build-env python=${{ matrix.python-version }} conda-build=3.28.1 anaconda-client -y
           echo "CONDA_ENV=build-env" >> $GITHUB_ENV
 
       - name: Build Conda Package
