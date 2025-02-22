@@ -26,7 +26,7 @@ jobs:
         with:
           auto-update-conda: true
           channels: conda-forge
-          python-version: ${{ matrix.python-version }}  # This version will be used for the environment setup
+          python-version: 3.12
 
       - name: Install build dependencies
         run: conda install -y conda-build anaconda-client
@@ -34,9 +34,10 @@ jobs:
       - name: Build Conda Package
         id: build
         run: |
-          conda build -c conda-forge recipe/ --output-folder output
-          # Get the path to the built package from the custom output folder
-          BUILT_PKG=$(conda build -c conda-forge recipe/ --output-folder output --output)
+          # Build using the output folder and override the Python variant to the one in the matrix
+          conda build -c conda-forge recipe/ --output-folder output --variants "{python: [${{ matrix.python-version }}]}"
+          # Get the path to the built package from the output folder
+          BUILT_PKG=$(conda build -c conda-forge recipe/ --output-folder output --variants "{python: [${{ matrix.python-version }}]}" --output)
           echo "Built package: ${BUILT_PKG}"
           echo "BUILT_PKG=${BUILT_PKG}" >> $GITHUB_ENV
 
