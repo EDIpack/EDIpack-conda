@@ -39,7 +39,7 @@ about:
   license: MIT
   summary: "EDIpack - Fortran library for electronic structure calculations"
   description: |
-    EDIpack is a library for electronic structure calculations,
+    EDIpack is a library for stuff,
     requiring SciFortran and various numerical libraries.
   dev_url: https://github.com/EDIpack/EDIpack2.0
 

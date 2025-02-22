@@ -39,7 +39,11 @@ jobs:
         run: |
           # Build using the output folder and override the Python variant to the one in the matrix
           conda init bash
-          source ~/.bashrc
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            source ~/.bash_profile
+          else
+            source ~/.bashrc
+          fi
           conda activate $CONDA_ENV
           conda build -c conda-forge recipe/ --output-folder output
           # Get the path to the built package from the output folder
@@ -51,7 +55,11 @@ jobs:
         shell: "bash -l {0}"
         run: |
           conda init bash
-          source ~/.bashrc
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            source ~/.bash_profile
+          else
+            source ~/.bashrc
+          fi
           conda activate $CONDA_ENV
           conda install -y conda-build anaconda-client
           echo "Uploading ${BUILT_PKG} to Anaconda..."
