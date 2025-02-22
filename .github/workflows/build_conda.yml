@@ -26,8 +26,7 @@ jobs:
         with:
           auto-update-conda: true
           channels: conda-forge
-          python-version: ${{ matrix.python-version }}
-          miniforge-version: "latest"
+          python-version: ${{ matrix.python-version }}  # This version will be used for the environment setup
 
       - name: Install build dependencies
         run: conda install -y conda-build anaconda-client
