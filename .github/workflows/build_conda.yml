@@ -38,7 +38,7 @@ jobs:
         id: build
         run: |
           # Build using the output folder and override the Python variant to the one in the matrix
-          source activate $CONDA_ENV
+          conda activate $CONDA_ENV
           conda build -c conda-forge recipe/ --output-folder output
           # Get the path to the built package from the output folder
           BUILT_PKG=$(conda build -c conda-forge recipe/ --output-folder output --output)
