@@ -36,7 +36,7 @@ jobs:
           echo "BUILT_PKG=${BUILT_PKG}" >> $GITHUB_ENV
 
       - name: Upload package to Anaconda
-        shell: bash -l
+        shell: "bash -l {0}"
         run: |
           conda init bash
           source ~/.bashrc

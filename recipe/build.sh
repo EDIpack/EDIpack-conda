@@ -20,7 +20,7 @@ cd scifor
 mkdir build
 cd build
 cmake .. -DPREFIX=${PREFIX}
-make -j
+make
 make install
 cd ../../
 
@@ -40,7 +40,7 @@ cd edipack2
 mkdir build
 cd build
 cmake .. -DPREFIX=${PREFIX}
-make -j
+make
 make install
 cd ../
 
