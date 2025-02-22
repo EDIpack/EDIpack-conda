@@ -32,14 +32,20 @@ jobs:
       - name: Install build dependencies
         run: |
           conda install -y conda-build=25.1.2 anaconda-client
-          anaconda login --username lcrippa
+          conda list anaconda-client  # Verify installation
+          which anaconda  # Check if 'anaconda' is available
+          $CONDA_PREFIX/bin/anaconda login --username lcrippa
+
+      - name: Configure Conda for Auto Upload
+        run: |
+          conda config --set anaconda_upload yes
+          conda config --show | grep anaconda_upload  # Verify setting
 
       - name: Build Conda Package
         id: build
         run: |
           # Build using the output folder and override the Python variant to the one in the matrix
           VARIANT="{python: [${{ matrix.python-version }}]}"
-          conda config --set anaconda_upload yes
           conda build -c conda-forge recipe/ --output-folder output --variants "$VARIANT"
           # Get the path to the built package from the output folder
           #BUILT_PKG=$(conda build -c conda-forge recipe/ --output-folder output --variants "$VARIANT" --output)
