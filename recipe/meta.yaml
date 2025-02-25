@@ -1,5 +1,5 @@
 package:
-  name: edipack
+  name: edipack2
   version: "2.0.5"
 
 source:
@@ -43,8 +43,8 @@ requirements:
 about:
   home: https://github.com/EDIpack/EDIpack2.0
   license: MIT
-  summary: "EDIpack - test"
+  summary: "EDIpack2.0 quantum impurity solver"
   description: |
-    This is a test.
+    EDIpack2.0 is a massively parallel Lanczos-based quantum impurity solver
   dev_url: https://github.com/EDIpack/EDIpack2.0
 
