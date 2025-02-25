@@ -1,6 +1,6 @@
 package:
   name: edipack2
-  version: "2.0.5"
+  version: "0.0.1"
 
 source:
   git_url: https://github.com/EDIpack/EDIpack2.0.git
