@@ -3,6 +3,6 @@
 
 this builds and uploads to anaconda.org the edipack package
 
-install with
+It sources the version from the edipack2.0 repository
 
-conda install -c edipack -c conda-forge edipack2
+Needs to be manually run, for safety
