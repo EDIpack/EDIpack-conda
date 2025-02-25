@@ -59,5 +59,5 @@ jobs:
           conda activate $CONDA_ENV
           conda install -y conda-build anaconda-client
           echo "Uploading ${BUILT_PKG} to Anaconda..."
-          anaconda upload --user lcrippa "${BUILT_PKG}"
+          anaconda upload -u edipack "${BUILT_PKG}"
         continue-on-error: true
