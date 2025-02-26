@@ -50,9 +50,9 @@ jobs:
           conda activate $CONDA_ENV
           # Update version in recipe/meta.yaml based on OS
           if [[ "$RUNNER_OS" == "macOS" ]]; then
-            sed -i '' "3s/0\.0\.1/${LATEST_TAG}/g" meta.yaml
+            sed -i '' "3s/0\.0\.1/${LATEST_TAG}/g" recipe/meta.yaml
           else
-            sed -i "3s/0\.0\.1/${LATEST_TAG}/g" meta.yaml
+            sed -i "3s/0\.0\.1/${LATEST_TAG}/g" recipe/meta.yaml
           fi      
           conda build -c conda-forge recipe/ --output-folder output
           # Get the path to the built package from the output folder
