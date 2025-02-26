@@ -68,6 +68,8 @@ else
     sed -i "s|\${prefix}|\${edipack_prefix}|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
     sed -i "1s|prefix|scifor_prefix|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
     sed -i "s|\${prefix}|\${scifor_prefix}|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
+    # Fix for mkl linking
+    sed -i 's|-L/usr/lib/x86_64-linux-gnu||g' "${PREFIX}/lib/pkgconfig/scifor.pc"
 fi
 
 
