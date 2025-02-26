@@ -24,6 +24,7 @@ requirements:
     - pip
     - numpy
     - mpi4py
+    - conda-verify
     - mkl <2025 # [linux]
     - mkl-devel <2025  # [linux]
     - mkl-include <2025 # [linux]
@@ -35,6 +36,7 @@ requirements:
     - numpy
     - mpi4py
     - openmpi
+    - pkg-config
     - mkl <2025 # [linux]
     - openblas  # [osx]
     - lapack  # [osx]
