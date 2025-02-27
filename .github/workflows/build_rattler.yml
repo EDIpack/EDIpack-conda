@@ -1,4 +1,4 @@
-name: Build and Upload Conda Packages using rattler
+name: Recommended builder
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest,macos-latest]
-        python-version: ["3.13"]
+        python-version: ["3.10","3.11","3.12","3.13"]
     env:
       ANACONDA_API_KEY: ${{ secrets.ANACONDA_API_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
