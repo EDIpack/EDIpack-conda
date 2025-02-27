@@ -16,6 +16,7 @@ build:
 requirements:
   build:
     - pkg-config
+    - python=${{ python }}
     - cmake
     - make
     - ninja
@@ -29,7 +30,7 @@ requirements:
       then:
         - libgfortran-ng  # [linux]
   host:
-    - python
+    - python=${{ python }}
     - meson-python
     - pip
     - numpy
@@ -45,11 +46,10 @@ requirements:
         - lapack  # [osx]
         - scalapack  # [osx]
   run:
-    - python
+    - python=${{ python }}
     - numpy
     - mpi4py
     - openmpi
-    - pkg-config
     - if: linux
       then:
         - mkl <2025  # [linux]
