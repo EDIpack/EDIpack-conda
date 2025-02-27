@@ -1,4 +1,4 @@
-name: Build and Upload Conda Packages (one runner)
+name: Build and Upload Conda Packages using conda-build
 
 on:
   workflow_dispatch:
@@ -9,8 +9,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        python-version: ["3.12"]
+        os: [ubuntu-latest,macos-latest]
+        python-version: ["3.10","3.11","3.12"]
     env:
       ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
     steps:
@@ -32,7 +32,8 @@ jobs:
 
       - name: Get Latest Tag from edipack2.0
         run: |
-          LATEST_TAG=$(curl -s "https://api.github.com/repos/edipack/edipack2.0/git/refs/tags" | \
+          LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          "https://api.github.com/repos/edipack/edipack2.0/git/refs/tags" | \
           jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
           echo "Latest Tag: $LATEST_TAG"
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
