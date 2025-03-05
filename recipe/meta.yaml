@@ -15,7 +15,7 @@ requirements:
     - meson-python 
     - {{ compiler('c') }}
     - {{ compiler('fortran') }}
-    - openmpi>4.1
+    - openmpi
     - libgfortran-ng=13  # [linux]
     - mpi
   host:
@@ -23,6 +23,7 @@ requirements:
     - meson-python 
     - pip
     - numpy
+    - openmpi
     - mpi4py
     - mkl <2025 # [linux]
     - mkl-devel <2025  # [linux]
@@ -34,7 +35,7 @@ requirements:
     - python
     - numpy
     - mpi4py
-    - openmpi>4.1
+    - openmpi
     - pkg-config
     - mkl <2025 # [linux]
     - openblas  # [osx]
