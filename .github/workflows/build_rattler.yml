@@ -22,7 +22,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
-          channels: conda-forge
+          channels: conda-forge defaults
           python-version: ${{ matrix.python-version }}
           miniforge-version: "latest"
 
