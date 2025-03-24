@@ -1,4 +1,4 @@
-name: Recommended builder
+name: Recommended builder (one single builder)
 
 on:
   workflow_dispatch:

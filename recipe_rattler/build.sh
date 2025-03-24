@@ -58,14 +58,14 @@ export GLOB_LIB=$( pkg-config --libs   scifor edipack2 | sed  "s/;/ /g"  | sed '
 #Replace ambigouos variable name in the .pc files
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS (BSD sed) requires an explicit '' argument for in-place editing
-    sed -i '' "1s|prefix|edipack_prefix|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
-    sed -i '' "s|\${prefix}|\${edipack_prefix}|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
+    #sed -i '' "1s|prefix|edipack_prefix|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
+    #sed -i '' "s|\${prefix}|\${edipack_prefix}|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
     sed -i '' "1s|prefix|scifor_prefix|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
     sed -i '' "s|\${prefix}|\${scifor_prefix}|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
 else
     # Linux (GNU sed)
-    sed -i "1s|prefix|edipack_prefix|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
-    sed -i "s|\${prefix}|\${edipack_prefix}|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
+    #sed -i "1s|prefix|edipack_prefix|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
+    #sed -i "s|\${prefix}|\${edipack_prefix}|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
     sed -i "1s|prefix|scifor_prefix|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
     sed -i "s|\${prefix}|\${scifor_prefix}|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
     # Fix for mkl linking
