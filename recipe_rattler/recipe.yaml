@@ -64,7 +64,8 @@ requirements:
 
 about:
   repository: https://github.com/EDIpack/EDIpack2.0
-  license: MIT
+  license: GPL-3.0-or-later
+  license_url: https://raw.githubusercontent.com/EDIpack/EDIpy2.0/refs/heads/main/LICENSE.txt
   summary: "EDIpack2.0 quantum impurity solver"
   description: |
     EDIpack2.0 is a massively parallel Lanczos-based quantum impurity solver.
