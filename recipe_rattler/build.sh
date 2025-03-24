@@ -74,4 +74,6 @@ fi
 
 
 #Install edipy
+git clone https://github.com/edipack/edipy2.0.git edipy2
+cd edipy2
 $PYTHON -m pip install . --prefix=${PREFIX} --no-deps --ignore-installed

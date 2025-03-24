@@ -31,6 +31,7 @@ requirements:
         - libgfortran-ng  # [linux]
   host:
     - python=${{ python }}
+    - pkgconfig #the python module
     - meson-python
     - pip
     - numpy
@@ -48,6 +49,7 @@ requirements:
         - scalapack  # [osx]
   run:
     - python=${{ python }}
+    - pkgconfig #the python module
     - numpy
     - mpi4py
     - openmpi
