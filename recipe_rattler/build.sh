@@ -48,7 +48,7 @@ cd ../
 for d_edipack in ${PREFIX}/opt/edipack2/gnu/*/etc; do
     if [ -d "$d_edipack" ]; then
         export PKG_CONFIG_PATH=${d_edipack}:${PKG_CONFIG_PATH}
-        cp ${d_edipack}/edipack2.pc ${PREFIX}/lib/pkgconfig/
+        cp ${d_edipack}/edipack2*.pc ${PREFIX}/lib/pkgconfig/
     fi
 done
 export GLOB_INC=$( pkg-config --cflags scifor edipack2)
