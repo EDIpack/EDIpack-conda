@@ -76,4 +76,4 @@ fi
 #Install edipack2py
 git clone https://github.com/edipack/edipack2py.git edipack2py
 cd edipack2py
-$PYTHON -m pip install . --prefix=${PREFIX} --no-deps --ignore-installed
+$PYTHON -m pip install . --prefix=${PREFIX} --no-deps --ignore-installed --no-build-isolation

@@ -21,6 +21,7 @@ requirements:
     - make
     - ninja
     - setuptools
+    - wheel
     - meson
     - meson-python
     - ${{ compiler("c") }}

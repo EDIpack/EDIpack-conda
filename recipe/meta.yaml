@@ -9,6 +9,7 @@ requirements:
   build:
     - pkg-config
     - setuptools
+    - wheel
     - cmake
     - make
     - ninja
