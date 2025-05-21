@@ -20,6 +20,7 @@ requirements:
     - cmake
     - make
     - ninja
+    - setuptools
     - meson
     - meson-python
     - ${{ compiler("c") }}
