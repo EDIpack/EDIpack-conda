@@ -24,6 +24,8 @@ requirements:
     - python
     - meson-python 
     - pip
+    - setuptools
+    - wheel
     - numpy
     - openmpi
     - mpi4py

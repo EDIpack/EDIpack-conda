@@ -36,6 +36,8 @@ requirements:
     - pkgconfig #the python module
     - meson-python
     - pip
+    - setuptools
+    - wheel
     - numpy
     - openmpi
     - mpi4py
