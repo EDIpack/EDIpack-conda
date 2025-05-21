@@ -1,5 +1,5 @@
 context:
-  name: edipack2
+  name: edipack
   version: "0.0.1"
   python: "3.13"
   number: "0"
@@ -63,10 +63,11 @@ requirements:
         - scalapack  # [osx]
 
 about:
-  repository: https://github.com/EDIpack/EDIpack2.0
+  repository: https://github.com/EDIpack/EDIpack
+  documentation: https://edipack.github.io/EDIpack
   license: GPL-3.0-or-later
-  license_url: https://raw.githubusercontent.com/EDIpack/EDIpy2.0/refs/heads/main/LICENSE.txt
-  summary: "EDIpack2.0 quantum impurity solver"
+  license_url: https://www.gnu.org/licenses/gpl-3.0-standalone.html
+  summary: "EDIpack quantum impurity solver"
   description: |
-    EDIpack2.0 is a massively parallel Lanczos-based quantum impurity solver.
+    EDIpack is a massively parallel Lanczos-based quantum impurity solver.
 

@@ -1,4 +1,4 @@
-name: Recommended builder
+name: Recommended builder (all versions)
 
 on:
   workflow_dispatch:
@@ -32,10 +32,10 @@ jobs:
           echo "CONDA_ENV=build-env" >> $GITHUB_ENV
           echo "PYTHONVERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
-      - name: Get Latest Tag from edipack2.0
+      - name: Get Latest Tag from edipack
         run: |
           LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-          "https://api.github.com/repos/edipack/edipack2.0/git/refs/tags" | \
+          "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
           jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
           echo "Latest Tag: $LATEST_TAG"
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV

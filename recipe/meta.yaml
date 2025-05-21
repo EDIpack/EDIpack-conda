@@ -1,9 +1,9 @@
 package:
-  name: edipack2
+  name: edipack
   version: "0.0.1"
 
 source:
-  git_url: https://github.com/EDIpack/EDIpack2.0.git
+  git_url: https://github.com/EDIpack/EDIpack.git
 
 requirements:
   build:
@@ -43,10 +43,10 @@ requirements:
     - scalapack  # [osx]
 
 about:
-  home: https://github.com/EDIpack/EDIpack2.0
+  home: https://github.com/EDIpack/EDIpack
   license: MIT
-  summary: "EDIpack2.0 quantum impurity solver"
+  summary: "EDIpack quantum impurity solver"
   description: |
-    EDIpack2.0 is a massively parallel Lanczos-based quantum impurity solver
-  dev_url: https://github.com/EDIpack/EDIpack2.0
+    EDIpack is a massively parallel Lanczos-based quantum impurity solver
+  dev_url: https://github.com/EDIpack/EDIpack
 

@@ -35,8 +35,8 @@ export GLOB_INC=$( pkg-config --cflags scifor )
 export GLOB_LIB=$( pkg-config --libs   scifor  | sed  "s/;/ /g"  | sed 's/\\/  /g' )
 
 # Clone and build EDIpack
-git clone https://github.com/edipack/edipack2.0.git edipack2
-cd edipack2
+git clone https://github.com/edipack/edipack.git edipack
+cd edipack
 mkdir build
 cd build
 cmake .. -DPREFIX=${PREFIX}/opt
@@ -45,27 +45,27 @@ make install
 cd ../
 
 
-for d_edipack in ${PREFIX}/opt/edipack2/gnu/*/etc; do
+for d_edipack in ${PREFIX}/opt/edipack/gnu/*/etc; do
     if [ -d "$d_edipack" ]; then
         export PKG_CONFIG_PATH=${d_edipack}:${PKG_CONFIG_PATH}
-        cp ${d_edipack}/edipack2*.pc ${PREFIX}/lib/pkgconfig/
+        cp ${d_edipack}/edipack*.pc ${PREFIX}/lib/pkgconfig/
     fi
 done
-export GLOB_INC=$( pkg-config --cflags scifor edipack2)
-export GLOB_LIB=$( pkg-config --libs   scifor edipack2 | sed  "s/;/ /g"  | sed 's/\\/  /g' )
+export GLOB_INC=$( pkg-config --cflags scifor edipack)
+export GLOB_LIB=$( pkg-config --libs   scifor edipack | sed  "s/;/ /g"  | sed 's/\\/  /g' )
 
 
 #Replace ambigouos variable name in the .pc files
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS (BSD sed) requires an explicit '' argument for in-place editing
-    #sed -i '' "1s|prefix|edipack_prefix|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
-    #sed -i '' "s|\${prefix}|\${edipack_prefix}|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
+    #sed -i '' "1s|prefix|edipack_prefix|g" "${PREFIX}/lib/pkgconfig/edipack.pc"
+    #sed -i '' "s|\${prefix}|\${edipack_prefix}|g" "${PREFIX}/lib/pkgconfig/edipack.pc"
     sed -i '' "1s|prefix|scifor_prefix|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
     sed -i '' "s|\${prefix}|\${scifor_prefix}|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
 else
     # Linux (GNU sed)
-    #sed -i "1s|prefix|edipack_prefix|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
-    #sed -i "s|\${prefix}|\${edipack_prefix}|g" "${PREFIX}/lib/pkgconfig/edipack2.pc"
+    #sed -i "1s|prefix|edipack_prefix|g" "${PREFIX}/lib/pkgconfig/edipack.pc"
+    #sed -i "s|\${prefix}|\${edipack_prefix}|g" "${PREFIX}/lib/pkgconfig/edipack.pc"
     sed -i "1s|prefix|scifor_prefix|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
     sed -i "s|\${prefix}|\${scifor_prefix}|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
     # Fix for mkl linking
@@ -73,7 +73,7 @@ else
 fi
 
 
-#Install edipy
-git clone https://github.com/edipack/edipy2.0.git edipy2
-cd edipy2
+#Install edipack2py
+git clone https://github.com/edipack/edipack2py.git edipack2py
+cd edipack2py
 $PYTHON -m pip install . --prefix=${PREFIX} --no-deps --ignore-installed
