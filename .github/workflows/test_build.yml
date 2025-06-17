@@ -6,37 +6,28 @@ on:
 jobs:
   build-upload:
     runs-on: ubuntu-latest
-    container:
-      image: quay.io/condaforge/linux-anvil-cos7-x86_64
     env:
       ANACONDA_API_KEY: ${{ secrets.ANACONDA_API_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Check glibc version
-        run: ldd --version
-
-      - name: Get latest edipack tag
+      - name: Pull CentOS 7 compatible container and run build
         run: |
-          LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
-            jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
-          echo "LATEST_TAG=${LATEST_TAG}" >> $GITHUB_ENV
+          docker run --rm -v "$PWD":/io -w /io quay.io/condaforge/linux-anvil-cos7-x86_64 bash -c "
+            yum install -y curl jq
+            LATEST_TAG=\$(curl -s -H 'Authorization: token $GITHUB_TOKEN' \
+              'https://api.github.com/repos/edipack/edipack/git/refs/tags' | \
+              jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
+            echo 'Using tag: '\$LATEST_TAG
+            sed -i '3s/0\\.0\\.1/\$LATEST_TAG/g' recipe_rattler/recipe.yaml
+            rattler-build build --recipe recipe_rattler/recipe.yaml --output-folder output
+          "
 
-      - name: Patch recipe with tag and Python version
+      - name: Upload built package
         run: |
-          sed -i "3s/0\.0\.1/${LATEST_TAG}/g" recipe_rattler/recipe.yaml
-
-      - name: Build Conda package
-        run: |
-          rattler-build build --recipe recipe_rattler/recipe.yaml --output-folder output
-          BUILT_PKG=$(find output -type f \( -name "*.conda" -o -name "*.tar.bz2" \))
-          echo "BUILT_PKG=${BUILT_PKG}" >> $GITHUB_ENV
-
-      - name: Upload package to Anaconda
-        run: |
-          rattler-build upload anaconda -f -o edipack "$BUILT_PKG"
-
+          PKG=$(find output -type f -name "*.conda" -o -name "*.tar.bz2")
+          echo "Found package: $PKG"
+          rattler-build upload anaconda -f -o edipack "$PKG"
