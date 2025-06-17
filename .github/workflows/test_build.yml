@@ -1,0 +1,42 @@
+name: Test a build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-upload:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/condaforge/linux-anvil-cos7-x86_64
+    env:
+      ANACONDA_API_KEY: ${{ secrets.ANACONDA_API_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check glibc version
+        run: ldd --version
+
+      - name: Get latest edipack tag
+        run: |
+          LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
+            jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
+          echo "LATEST_TAG=${LATEST_TAG}" >> $GITHUB_ENV
+
+      - name: Patch recipe with tag and Python version
+        run: |
+          sed -i "3s/0\.0\.1/${LATEST_TAG}/g" recipe_rattler/recipe.yaml
+
+      - name: Build Conda package
+        run: |
+          rattler-build build --recipe recipe_rattler/recipe.yaml --output-folder output
+          BUILT_PKG=$(find output -type f \( -name "*.conda" -o -name "*.tar.bz2" \))
+          echo "BUILT_PKG=${BUILT_PKG}" >> $GITHUB_ENV
+
+      - name: Upload package to Anaconda
+        run: |
+          rattler-build upload anaconda -f -o edipack "$BUILT_PKG"
+
