@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-upload:
+  build:
     runs-on: ubuntu-latest
     env:
       ANACONDA_API_KEY: ${{ secrets.ANACONDA_API_TOKEN }}
@@ -14,20 +14,30 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Pull CentOS 7 compatible container and run build
+      - name: Run build inside CentOS 7-compatible container
         run: |
-          docker run --rm -v "$PWD":/io -w /io quay.io/condaforge/linux-anvil-cos7-x86_64 bash -c "
-            yum install -y curl jq
-            LATEST_TAG=\$(curl -s -H 'Authorization: token $GITHUB_TOKEN' \
-              'https://api.github.com/repos/edipack/edipack/git/refs/tags' | \
-              jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
-            echo 'Using tag: '\$LATEST_TAG
-            sed -i '3s/0\\.0\\.1/\$LATEST_TAG/g' recipe_rattler/recipe.yaml
-            rattler-build build --recipe recipe_rattler/recipe.yaml --output-folder output
-          "
+          docker run --rm \
+            -v "$PWD":/io \
+            -w /io \
+            ghcr.io/mamba-org/boa-forge:latest bash -c '
+              echo "Getting latest tag from GitHub..."
+              LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+                "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
+                jq -r ".[].ref" | sed "s#refs/tags/##" | sort -V | grep -v v | tail -n 1)
+              echo "Latest tag: $LATEST_TAG"
+
+              echo "Patching recipe..."
+              sed -i "3s/0\\.0\\.1/${LATEST_TAG}/g" recipe_rattler/recipe.yaml
+              sed -i "4s/3\\.13/3.11/g" recipe_rattler/recipe.yaml
+
+              echo "Building..."
+              rattler-build build --recipe recipe_rattler/recipe.yaml --output-folder output
+
+              echo "Build complete"
+            '
 
       - name: Upload built package
         run: |
           PKG=$(find output -type f -name "*.conda" -o -name "*.tar.bz2")
-          echo "Found package: $PKG"
+          echo "Built package: $PKG"
           rattler-build upload anaconda -f -o edipack "$PKG"
