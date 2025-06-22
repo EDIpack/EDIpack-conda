@@ -35,6 +35,12 @@ jobs:
               mamba create -n build-env -c conda-forge python=3.13 rattler-build sysroot_linux-64=2.17 jq curl git -y
               source $(conda info --base)/etc/profile.d/conda.sh
               conda activate build-env
+              
+              export SYSROOT=$CONDA_PREFIX/x86_64-conda-linux-gnu/sysroot
+              export LIBRARY_PATH=$SYSROOT/usr/lib64:$LIBRARY_PATH
+              export C_INCLUDE_PATH=$SYSROOT/usr/include:$C_INCLUDE_PATH
+              export LD_LIBRARY_PATH=$SYSROOT/usr/lib64:$LD_LIBRARY_PATH
+              
 
               echo "Latest tag: $LATEST_TAG"
               echo "Python ver: $PYTHONVERSION"
