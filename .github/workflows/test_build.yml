@@ -1,6 +1,5 @@
 name: Test a build
 
-
 on:
   workflow_dispatch:
 
@@ -14,48 +13,45 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Get Latest Tag from edipack
         run: |
           LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-          "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
-          jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
+            "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
+            jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
           echo "Latest Tag: $LATEST_TAG"
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
-      - name: Build with conda-forge/anvil container
+      - name: Build with centos7 container
         run: |
-            docker run --rm -v "$PWD":/io -w /io -e LATEST_TAG="$LATEST_TAG" -e PYTHONVERSION="3.13" centos:7 bash -c '
-              set -e
-              yum install -y glibc-devel wget bzip2 gcc make curl jq git && yum clean all
-              curl -L -o miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-              bash miniconda.sh -b -p /opt/miniconda
-              export PATH=/opt/miniconda/bin:$PATH
-              source /opt/miniconda/etc/profile.d/conda.sh
-              
-              echo "Create and activate build environment with rattler-build..."
-              conda create -n build-env -c conda-forge python=3.13 rattler-build jq curl git -y
-              source $(conda info --base)/etc/profile.d/conda.sh
-              conda activate build-env
-              
-              echo "Latest tag: $LATEST_TAG"
-              echo "Python ver: $PYTHONVERSION"
+          docker run --rm -v "$PWD":/io -w /io -e LATEST_TAG="$LATEST_TAG" -e PYTHONVERSION="3.13" centos:7 bash -c '
+            set -e
+            yum install -y glibc-devel wget bzip2 gcc make curl jq git && yum clean all
 
-              echo "Patching recipe..."
-              mkdir -p /tmp/build_workspace
-              cp -r /io/* /tmp/build_workspace/
-              
-              cd /tmp/build_workspace
+            curl -L -o miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+            bash miniconda.sh -b -p /opt/miniconda
+            export PATH=/opt/miniconda/bin:$PATH
+            source /opt/miniconda/etc/profile.d/conda.sh
 
-              sed -i "3s|0\\.0\\.1|${LATEST_TAG}|g" recipe_rattler/recipe_test.yaml
-              sed -i "4s|3\\.13|${PYTHONVERSION}|g" recipe_rattler/recipe_test.yaml
+            echo "Create and activate build environment with rattler-build..."
+            conda create -n build-env -c conda-forge python=3.13 rattler-build jq curl git -y
+            conda activate build-env
 
-              echo "Running rattler-build..."
-              rattler-build build --recipe recipe_rattler/recipe_test.yaml
-              PKG=$(find output -type f -name "*.conda" -o -name "*.tar.bz2")
-              echo "Built package: $PKG"
-              rattler-build upload anaconda -f -o edipack "$PKG"
+            echo "Latest tag: $LATEST_TAG"
+            echo "Python ver: $PYTHONVERSION"
+
+            echo "Patching recipe..."
+            mkdir -p /tmp/build_workspace
+            cp -r /io/* /tmp/build_workspace/
+            cd /tmp/build_workspace
+
+            sed -i "3s|0.0.1|${LATEST_TAG}|g" recipe_rattler/recipe_test.yaml
+            sed -i "4s|3.13|${PYTHONVERSION}|g" recipe_rattler/recipe_test.yaml
+
+            echo "Running rattler-build..."
+            rattler-build build --recipe recipe_rattler/recipe_test.yaml
+            PKG=$(find output -type f -name "*.conda" -o -name "*.tar.bz2")
+            echo "Built package: $PKG"
+            rattler-build upload anaconda -f -o edipack "$PKG"
           '
 
-          
-          
