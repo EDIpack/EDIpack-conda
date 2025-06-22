@@ -17,7 +17,7 @@ jobs:
 
       - name: Build with conda-forge/anvil container
         run: |
-          docker run --rm  -v -t condaforge/linux-anvil-x86_64:alma8 bash -c  '
+          docker run --rm -t -v "$PWD":/io -w /io condaforge/linux-anvil-x86_64:alma8 bash -c  '
             set -e
 
             echo "Create and activate build environment with rattler-build..."
