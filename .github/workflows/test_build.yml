@@ -26,7 +26,7 @@ jobs:
         run: |
           docker run --rm -v "$PWD":/io -w /io -e LATEST_TAG="$LATEST_TAG" -e PYTHONVERSION="3.13" centos:7 bash -c '
             set -e
-            yum install -y glibc-devel wget bzip2 gcc make curl jq git && yum clean all
+            yum install -y glibc-devel glibc-headers wget bzip2 gcc make curl jq git && yum clean all
 
             curl -L -o miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
             bash miniconda.sh -b -p /opt/miniconda
