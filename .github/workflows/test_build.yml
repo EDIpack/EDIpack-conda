@@ -43,8 +43,8 @@ jobs:
 
               echo "Patching recipe..."
               cp /io/recipe_rattler/recipe.yaml /tmp/recipe.yaml
-              sed -i "3s/0\\.0\\.1/${LATEST_TAG}/g" /tmp/recipe.yaml
-              sed -i "4s/3\\.13/${PYTHONVERSION}//g" /tmp/recipe.yaml
+              sed -i "3s|0\\.0\\.1|${LATEST_TAG}|g" /tmp/recipe.yaml
+              sed -i "4s|3\\.13|${PYTHONVERSION}|g" /tmp/recipe.yaml
 
               echo "Running rattler-build..."
               rattler-build build --recipe /tmp/recipe.yaml --output-folder output
