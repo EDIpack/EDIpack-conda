@@ -25,25 +25,19 @@ jobs:
 
       - name: Build with conda-forge/anvil container
         run: |
-          docker run --rm -v "$PWD":/io -w /io \
-            -e LATEST_TAG="$LATEST_TAG" \
-            -e PYTHONVERSION="3.13" \
-            condaforge/linux-anvil-cos7-x86_64:latest bash -c  '
-              set -e             
+            docker run --rm -v "$PWD":/io -w /io -e LATEST_TAG="$LATEST_TAG" -e PYTHONVERSION="3.13" centos:7 bash -c '
+              set -e
+              yum install -y glibc-devel wget bzip2 gcc make curl jq git && yum clean all
+              curl -L -o miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+              bash miniconda.sh -b -p /opt/miniconda
+              export PATH=/opt/miniconda/bin:$PATH
+              source /opt/miniconda/etc/profile.d/conda.sh
               
               echo "Create and activate build environment with rattler-build..."
-              mamba create -n build-env -c conda-forge python=3.13 rattler-build sysroot_linux-64=2.17 jq curl git -y
+              conda create -n build-env -c conda-forge python=3.13 rattler-build jq curl git -y
               source $(conda info --base)/etc/profile.d/conda.sh
               conda activate build-env
               
-              export SYSROOT=$CONDA_PREFIX/x86_64-conda-linux-gnu/sysroot
-              export LIBRARY_PATH=$SYSROOT/usr/lib64:$LIBRARY_PATH
-              export C_INCLUDE_PATH=$SYSROOT/usr/include:$C_INCLUDE_PATH
-              export LD_LIBRARY_PATH=$SYSROOT/usr/lib64:$LD_LIBRARY_PATH
-              export FC=$BUILD_PREFIX/bin/x86_64-conda-linux-gnu-gfortran
-              export MPIF90=$FC
-              
-
               echo "Latest tag: $LATEST_TAG"
               echo "Python ver: $PYTHONVERSION"
 

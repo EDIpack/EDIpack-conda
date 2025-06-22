@@ -30,7 +30,6 @@ requirements:
     - if: linux
       then:
         - libgfortran-ng  # [linux]
-        - sysroot_linux-64=2.17
   host:
     - python=${{ python }}
     - pkgconfig #the python module
