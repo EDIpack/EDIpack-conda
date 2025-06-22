@@ -27,7 +27,7 @@ jobs:
         run: |
           docker run --rm -v "$PWD":/io -w /io \
             -e LATEST_TAG="$LATEST_TAG" \
-            -e PYTHONVERSION="3.11" \
+            -e PYTHONVERSION="3.13" \
             condaforge/linux-anvil-x86_64:alma8 bash -c  '
               set -e
               echo "Create and activate build environment with rattler-build..."
@@ -44,8 +44,8 @@ jobs:
               sed -i "4s|3\\.13|${PYTHONVERSION}|g" /tmp/recipe.yaml
 
               echo "Running rattler-build..."
-              rattler-build build --recipe /tmp/recipe.yaml --output-dir output
-              PKG=$(find output -type f -name "*.conda" -o -name "*.tar.bz2")
+              rattler-build build --recipe /tmp/recipe.yaml --output-dir /tmp/output --no-copy-source
+              PKG=$(find /tmp/output -type f -name "*.conda" -o -name "*.tar.bz2")
               echo "Built package: $PKG"
               rattler-build upload anaconda -f -o edipack "$PKG"
           '
