@@ -26,7 +26,7 @@ jobs:
       - name: Build with conda-forge/anvil container
         run: |
           docker run --rm -v "$PWD":/io -w /io \
-            -e GITHUB_TOKEN="$GITHUB_TOKEN" \
+            -e LATEST_TAG="$LATEST_TAG" \
             -e PYTHONVERSION="3.11" \
             condaforge/linux-anvil-x86_64:alma8 bash -c  '
               set -e
@@ -35,11 +35,8 @@ jobs:
               source $(conda info --base)/etc/profile.d/conda.sh
               conda activate build-env
 
-              echo "Fetching latest tag..."
-              LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
-                jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
               echo "Latest tag: $LATEST_TAG"
+              echo "Python ver: $PYTHONVERSION"
 
               echo "Patching recipe..."
               cp /io/recipe_rattler/recipe.yaml /tmp/recipe.yaml
