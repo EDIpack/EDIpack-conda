@@ -39,13 +39,15 @@ jobs:
               echo "Python ver: $PYTHONVERSION"
 
               echo "Patching recipe..."
+              mkdir -p /tmp/build_workspace
+              cp -r /io/* /tmp/build_workspace/
               cp /io/recipe_rattler/recipe.yaml /tmp/recipe.yaml
               sed -i "3s|0\\.0\\.1|${LATEST_TAG}|g" /tmp/recipe.yaml
               sed -i "4s|3\\.13|${PYTHONVERSION}|g" /tmp/recipe.yaml
 
               echo "Running rattler-build..."
-              rattler-build build --recipe /tmp/recipe.yaml --output-dir /tmp/output
-              PKG=$(find /tmp/output -type f -name "*.conda" -o -name "*.tar.bz2")
+              rattler-build build --recipe /tmp/recipe.yaml --output-dir /io/output
+              PKG=$(find /io/output -type f -name "*.conda" -o -name "*.tar.bz2")
               echo "Built package: $PKG"
               rattler-build upload anaconda -f -o edipack "$PKG"
           '
