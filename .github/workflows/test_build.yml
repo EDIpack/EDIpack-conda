@@ -47,11 +47,11 @@ jobs:
               sed -i "4s|3\\.13|${PYTHONVERSION}|g" /tmp/recipe.yaml
 
               echo "Running rattler-build..."
-              rattler-build build --recipe /tmp/recipe.yaml --output-folder output
+              rattler-build build --recipe /tmp/recipe.yaml --output-dir output
+              PKG=$(find output -type f -name "*.conda" -o -name "*.tar.bz2")
+              echo "Built package: $PKG"
+              rattler-build upload anaconda -f -o edipack "$PKG"
           '
 
-      - name: Upload built package to Anaconda
-        run: |
-          PKG=$(find output -type f -name "*.conda" -o -name "*.tar.bz2")
-          echo "Built package: $PKG"
-          rattler-build upload anaconda -f -o edipack "$PKG"
+          
+          
