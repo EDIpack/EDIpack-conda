@@ -28,7 +28,7 @@ jobs:
           docker run --rm -v "$PWD":/io -w /io \
             -e LATEST_TAG="$LATEST_TAG" \
             -e PYTHONVERSION="3.13" \
-            condaforge/linux-anvil-cos7-x86_64:latest bash -c  '
+            almalinux:7 bash -c  '
               set -e             
               
               echo "Create and activate build environment with rattler-build..."
