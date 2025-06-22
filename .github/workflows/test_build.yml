@@ -25,8 +25,9 @@ jobs:
 
       - name: Build with conda-forge/anvil container
         run: |
-          docker run --rm --user root -v "$PWD":/io -w /io \
+          docker run --rm -v "$PWD":/io -w /io \
             -e GITHUB_TOKEN="$GITHUB_TOKEN" \
+            -e PYTHONVERSION="3.11" \
             condaforge/linux-anvil-x86_64:alma8 bash -c  '
               set -e
               echo "Create and activate build environment with rattler-build..."
@@ -41,11 +42,12 @@ jobs:
               echo "Latest tag: $LATEST_TAG"
 
               echo "Patching recipe..."
-              sed -i "3s/0\\.0\\.1/${LATEST_TAG}/g" /io/recipe_rattler/recipe.yaml
-              #sed -i "4s/3\\.13/3.11/g" recipe_rattler/recipe.yaml
+              cp /io/recipe_rattler/recipe.yaml /tmp/recipe.yaml
+              sed -i "3s/0\\.0\\.1/${LATEST_TAG}/g" /tmp/recipe.yaml
+              sed -i "4s/3\\.13/${PYTHONVERSION}//g" /tmp/recipe.yaml
 
               echo "Running rattler-build..."
-              rattler-build build --recipe /io/recipe_rattler/recipe.yaml --output-folder output
+              rattler-build build --recipe /tmp/recipe.yaml --output-folder output
           '
 
       - name: Upload built package to Anaconda
