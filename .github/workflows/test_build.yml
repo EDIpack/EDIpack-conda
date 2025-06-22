@@ -25,16 +25,14 @@ jobs:
 
       - name: Build with conda-forge/anvil container
         run: |
-          docker run --user root --rm -v "$PWD":/io -w /io \
+          docker run --rm -v "$PWD":/io -w /io \
             -e LATEST_TAG="$LATEST_TAG" \
             -e PYTHONVERSION="3.13" \
             condaforge/linux-anvil-cos7-x86_64:latest bash -c  '
-              set -e 
-              
-              dnf install glibc-devel
+              set -e             
               
               echo "Create and activate build environment with rattler-build..."
-              mamba create -n build-env -c conda-forge python=3.13 rattler-build jq curl git -y
+              mamba create -n build-env -c conda-forge python=3.13 rattler-build libc-dev jq curl git -y
               source $(conda info --base)/etc/profile.d/conda.sh
               conda activate build-env
 
