@@ -26,16 +26,25 @@ jobs:
         run: |
           docker run --rm -v "$PWD":/io -w /io -e LATEST_TAG="$LATEST_TAG" -e PYTHONVERSION="3.13" centos:7 bash -c '
             set -e
+
+            # Install system deps
             yum install -y glibc-devel glibc-headers wget bzip2 gcc make curl jq git && yum clean all
 
+            # Install Miniconda
             curl -L -o miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
             bash miniconda.sh -b -p /opt/miniconda
             export PATH=/opt/miniconda/bin:$PATH
             source /opt/miniconda/etc/profile.d/conda.sh
 
-            echo "Create and activate build environment with rattler-build..."
+            # Create conda build env
             conda create -n build-env -c conda-forge python=3.13 rattler-build jq curl git -y
             conda activate build-env
+
+            # Export env vars so compiler/linker see system libs and conda sysroot libs together
+            export SYSROOT=$CONDA_PREFIX/x86_64-conda-linux-gnu/sysroot
+            export LIBRARY_PATH=$SYSROOT/usr/lib64:/usr/lib64:$LIBRARY_PATH
+            export C_INCLUDE_PATH=$SYSROOT/usr/include:/usr/include:$C_INCLUDE_PATH
+            export LD_LIBRARY_PATH=$SYSROOT/usr/lib64:/usr/lib64:$LD_LIBRARY_PATH
 
             echo "Latest tag: $LATEST_TAG"
             echo "Python ver: $PYTHONVERSION"
