@@ -32,7 +32,7 @@ jobs:
               set -e             
               
               echo "Create and activate build environment with rattler-build..."
-              mamba create -n build-env -c conda-forge python=3.13 rattler-build sysroot_linux-64=2.17 jq curl git -y
+              mamba create -n build-env -c conda-forge python=3.13 rattler-build jq curl git -y
               source $(conda info --base)/etc/profile.d/conda.sh
               conda activate build-env
               
@@ -51,11 +51,11 @@ jobs:
               
               cd /tmp/build_workspace
 
-              sed -i "3s|0\\.0\\.1|${LATEST_TAG}|g" recipe_rattler/recipe.yaml
-              sed -i "4s|3\\.13|${PYTHONVERSION}|g" recipe_rattler/recipe.yaml
+              sed -i "3s|0\\.0\\.1|${LATEST_TAG}|g" recipe_rattler/recipe_test.yaml
+              sed -i "4s|3\\.13|${PYTHONVERSION}|g" recipe_rattler/recipe_test.yaml
 
               echo "Running rattler-build..."
-              rattler-build build --recipe recipe_rattler/recipe.yaml
+              rattler-build build --recipe recipe_rattler/recipe_test.yaml
               PKG=$(find output -type f -name "*.conda" -o -name "*.tar.bz2")
               echo "Built package: $PKG"
               rattler-build upload anaconda -f -o edipack "$PKG"
