@@ -28,11 +28,11 @@ jobs:
             echo "Fetching latest tag..."
             LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
               "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
-              jq -r ".[].ref" | sed "s#refs/tags/##" | grep -v '^v' | sort -V | tail -n 1)
+              jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
             echo "Latest tag: $LATEST_TAG"
 
             echo "Patching recipe..."
-            sed -i "3s/0\\.0\\.1/${LATEST_TAG}/g" recipe_rattler/recipe.yaml
+            sed -i "3s/0\\.0\\.1/${LATEST_TAG}/g" /io/recipe_rattler/recipe.yaml
             #sed -i "4s/3\\.13/3.11/g" recipe_rattler/recipe.yaml
 
             echo "Running rattler-build..."
