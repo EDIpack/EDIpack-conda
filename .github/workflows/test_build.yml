@@ -14,29 +14,38 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        
+      - name: Get Latest Tag from edipack
+        run: |
+          LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
+          jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
+          echo "Latest Tag: $LATEST_TAG"
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
       - name: Build with conda-forge/anvil container
         run: |
-          docker run --rm -t -v "$PWD":/io -w /io condaforge/linux-anvil-x86_64:alma8 bash -c  '
-            set -e
+          docker run --rm --user root -v "$PWD":/io -w /io \
+            -e GITHUB_TOKEN="$GITHUB_TOKEN" \
+            condaforge/linux-anvil-x86_64:alma8 bash -c  '
+              set -e
+              echo "Create and activate build environment with rattler-build..."
+              mamba create -n build-env -c conda-forge python=3.13 rattler-build jq curl -y
+              source $(conda info --base)/etc/profile.d/conda.sh
+              conda activate build-env
 
-            echo "Create and activate build environment with rattler-build..."
-            mamba create -n build-env -c conda-forge python=3.13 rattler-build jq curl -y
-            source $(conda info --base)/etc/profile.d/conda.sh
-            conda activate build-env
+              echo "Fetching latest tag..."
+              LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+                "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
+                jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
+              echo "Latest tag: $LATEST_TAG"
 
-            echo "Fetching latest tag..."
-            LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-              "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
-              jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
-            echo "Latest tag: $LATEST_TAG"
+              echo "Patching recipe..."
+              sed -i "3s/0\\.0\\.1/${LATEST_TAG}/g" /io/recipe_rattler/recipe.yaml
+              #sed -i "4s/3\\.13/3.11/g" recipe_rattler/recipe.yaml
 
-            echo "Patching recipe..."
-            sed -i "3s/0\\.0\\.1/${LATEST_TAG}/g" /io/recipe_rattler/recipe.yaml
-            #sed -i "4s/3\\.13/3.11/g" recipe_rattler/recipe.yaml
-
-            echo "Running rattler-build..."
-            rattler-build build --recipe recipe_rattler/recipe.yaml --output-folder output
+              echo "Running rattler-build..."
+              rattler-build build --recipe /io/recipe_rattler/recipe.yaml --output-folder output
           '
 
       - name: Upload built package to Anaconda
