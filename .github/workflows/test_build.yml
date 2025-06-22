@@ -30,6 +30,11 @@ jobs:
             -e PYTHONVERSION="3.13" \
             condaforge/linux-anvil-x86_64:alma8 bash -c  '
               set -e
+              
+              echo "Installing system libraries..."
+              dnf install -y glibc-devel
+              
+              
               echo "Create and activate build environment with rattler-build..."
               mamba create -n build-env -c conda-forge python=3.13 rattler-build jq curl git -y
               source $(conda info --base)/etc/profile.d/conda.sh
