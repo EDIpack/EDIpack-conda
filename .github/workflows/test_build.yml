@@ -1,66 +1,68 @@
-name: Test a build
+name: Recommended builder (one single build)
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-upload:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.13"]
     env:
       ANACONDA_API_KEY: ${{ secrets.ANACONDA_API_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-name: build-env
+          create-args: >-
+            python=3.13
+            rattler-build
+            compilers
+            sysroot_linux-64=2.17
+            cmake
+            make
+          cache-downloads: true
+
+
       - name: Get Latest Tag from edipack
         run: |
           LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
-            jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
+          "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
+          jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
           echo "Latest Tag: $LATEST_TAG"
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
-      - name: Build with centos7 container
+      - name: Build Conda Package
+        id: build
         run: |
-          docker run --rm -v "$PWD":/io -w /io -e LATEST_TAG="$LATEST_TAG" -e PYTHONVERSION="3.13" centos:7 bash -c '
-            set -e
-
-            # Install system deps
-            yum install -y glibc-devel glibc-headers wget bzip2 gcc make curl jq git && yum clean all
-
-            # Install Miniconda
-            curl -L -o miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-            bash miniconda.sh -b -p /opt/miniconda
-            export PATH=/opt/miniconda/bin:$PATH
-            source /opt/miniconda/etc/profile.d/conda.sh
-
-            # Create conda build env
-            conda create -n build-env -c conda-forge python=3.13 rattler-build jq curl git -y
-            conda activate build-env
-
-            # Export env vars so compiler/linker see system libs and conda sysroot libs together
-            export SYSROOT=$CONDA_PREFIX/x86_64-conda-linux-gnu/sysroot
-            export LIBRARY_PATH=$SYSROOT/usr/lib64:/usr/lib64:$LIBRARY_PATH
-            export C_INCLUDE_PATH=$SYSROOT/usr/include:/usr/include:$C_INCLUDE_PATH
-            export LD_LIBRARY_PATH=$SYSROOT/usr/lib64:/usr/lib64:$LD_LIBRARY_PATH
-
-            echo "Latest tag: $LATEST_TAG"
-            echo "Python ver: $PYTHONVERSION"
-
-            echo "Patching recipe..."
-            mkdir -p /tmp/build_workspace
-            cp -r /io/* /tmp/build_workspace/
-            cd /tmp/build_workspace
-
-            sed -i "3s|0.0.1|${LATEST_TAG}|g" recipe_rattler/recipe_test.yaml
-            sed -i "4s|3.13|${PYTHONVERSION}|g" recipe_rattler/recipe_test.yaml
-
-            echo "Running rattler-build..."
-            rattler-build build --recipe recipe_rattler/recipe_test.yaml
-            PKG=$(find output -type f -name "*.conda" -o -name "*.tar.bz2")
-            echo "Built package: $PKG"
-            rattler-build upload anaconda -f -o edipack "$PKG"
-          '
+          # Build using the output folder and override the Python variant to the one in the matrix
+          conda init bash
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            source ~/.bash_profile
+          else
+            source ~/.bashrc
+          fi
+          conda activate $CONDA_ENV
+          # Update version in recipe_rattler/recipe.yaml based on OS
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            sed -i '' "3s/0\.0\.1/${LATEST_TAG}/g" recipe_rattler/recipe.yaml
+            sed -i '' "4s/3\.13/${PYTHONVERSION}/g" recipe_rattler/recipe.yaml
+          else
+            sed -i "3s/0\.0\.1/${LATEST_TAG}/g" recipe_rattler/recipe.yaml
+            sed -i "4s/3\.13/${PYTHONVERSION}/g" recipe_rattler/recipe.yaml
+          fi
+          rattler-build build --recipe recipe_rattler/recipe.yaml
+          # Get the path to the built package from the output folder
+          BUILT_PKG=$(find output -type f \( -name "*.conda" -o -name "*.tar.bz2" \))
+          echo "Built package: ${BUILT_PKG}"
+          echo "BUILT_PKG=${BUILT_PKG}" >> $GITHUB_ENV
+          rattler-build upload anaconda -f -o edipack ${BUILT_PKG}
 
