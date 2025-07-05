@@ -1,4 +1,4 @@
-name: Recommended builder (one single build)
+name: Test build
 
 on:
   workflow_dispatch:
@@ -45,12 +45,9 @@ jobs:
         run: |
           # Build using the output folder and override the Python variant to the one in the matrix
           conda init bash
-          if [[ "$RUNNER_OS" == "macOS" ]]; then
-            source ~/.bash_profile
-          else
-            source ~/.bashrc
-          fi
           conda activate $CONDA_ENV
+          ldd --version | head -n 1
+          which ldd
           # Update version in recipe_rattler/recipe.yaml based on OS
           if [[ "$RUNNER_OS" == "macOS" ]]; then
             sed -i '' "3s/0\.0\.1/${LATEST_TAG}/g" recipe_rattler/recipe.yaml
