@@ -30,7 +30,6 @@ jobs:
             sysroot_linux-64=2.17
             cmake
             make
-          cache-downloads: true
 
       - name: Set up micromamba (macOS)
         if: runner.os == 'macOS'
@@ -43,7 +42,6 @@ jobs:
             compilers
             cmake
             make
-          cache-downloads: true
 
 
       - name: Get Latest Tag from edipack
