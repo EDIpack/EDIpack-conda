@@ -49,11 +49,11 @@ jobs:
 
           # Update version in recipe_rattler/recipe.yaml based on OS
           if [[ "$RUNNER_OS" == "macOS" ]]; then
-            sed -i '' "3s/0\.0\.1/${LATEST_TAG}/g" recipe_rattler/recipe.yaml
-            sed -i '' "4s/3\.13/${PYTHONVERSION}/g" recipe_rattler/recipe.yaml
+            sed -i '' "3s/0\.0\.1/${LATEST_TAG}/g" recipe_rattler/recipe_test.yaml
+            sed -i '' "4s/3\.13/${PYTHONVERSION}/g" recipe_rattler/recipe_test.yaml
           else
-            sed -i "3s/0\.0\.1/${LATEST_TAG}/g" recipe_rattler/recipe.yaml
-            sed -i "4s/3\.13/${PYTHONVERSION}/g" recipe_rattler/recipe.yaml
+            sed -i "3s/0\.0\.1/${LATEST_TAG}/g" recipe_rattler/recipe_test.yaml
+            sed -i "4s/3\.13/${PYTHONVERSION}/g" recipe_rattler/recipe_test.yaml
           fi
           rattler-build build --recipe recipe_rattler/recipe.yaml
           # Get the path to the built package from the output folder
