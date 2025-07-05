@@ -18,7 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build package
+      - name: Set up micromamba
         uses: mamba-org/setup-micromamba@v1
         with:
           environment-name: build-env
@@ -30,15 +30,23 @@ jobs:
             cmake
             make
           cache-downloads: true
+
+
+      - name: Get Latest Tag from edipack
         run: |
           LATEST_TAG=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
           "https://api.github.com/repos/edipack/edipack/git/refs/tags" | \
           jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
           echo "Latest Tag: $LATEST_TAG"
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+
+      - name: Build Conda Package
+        id: build
+        run: |
           # Build using the output folder and override the Python variant to the one in the matrix
-          source $(conda info --base)/etc/profile.d/conda.sh
+          eval "$(micromamba shell hook --shell=bash)"
           conda activate build-env
+
           # Update version in recipe_rattler/recipe.yaml based on OS
           if [[ "$RUNNER_OS" == "macOS" ]]; then
             sed -i '' "3s/0\.0\.1/${LATEST_TAG}/g" recipe_rattler/recipe.yaml
