@@ -23,7 +23,7 @@ jobs:
         with:
           environment-name: build-env
           create-args: >-
-            python=3.13
+            python=${{ matrix.python-version }}
             rattler-build
             compilers
             sysroot_linux-64=2.17
@@ -39,6 +39,7 @@ jobs:
           jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
           echo "Latest Tag: $LATEST_TAG"
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+          echo "PYTHONVERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Build Conda Package
         id: build
