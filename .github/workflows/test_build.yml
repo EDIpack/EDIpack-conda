@@ -45,7 +45,7 @@ jobs:
         run: |
           # Build using the output folder and override the Python variant to the one in the matrix
           eval "$(micromamba shell hook --shell=bash)"
-          conda activate build-env
+          micromamba activate build-env
 
           # Update version in recipe_rattler/recipe.yaml based on OS
           if [[ "$RUNNER_OS" == "macOS" ]]; then
