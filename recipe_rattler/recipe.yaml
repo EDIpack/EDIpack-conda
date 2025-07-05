@@ -69,7 +69,6 @@ about:
   repository: https://github.com/EDIpack/EDIpack
   documentation: https://edipack.github.io/EDIpack
   license: GPL-3.0-or-later
-  license_url: https://www.gnu.org/licenses/gpl-3.0-standalone.html
   summary: "EDIpack quantum impurity solver"
   description: |
     EDIpack is a massively parallel Lanczos-based quantum impurity solver.
