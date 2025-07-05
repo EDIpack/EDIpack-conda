@@ -6,6 +6,9 @@ export FC=$(which mpif90)
 export CC=$(which mpicc)
 export CXX=$(which mpicxx)
 
+SYSROOT_DIR="${CONDA_BUILD_SYSROOT:-$(${CC:-gcc} -print-sysroot)}"
+echo "Sysroot dir: ${SYSROOT_DIR}"
+
 #Create pkg-config directory, if it doesn't exist
 mkdir -p ${PREFIX}/lib/pkgconfig
 
@@ -19,7 +22,7 @@ git clone https://github.com/SciFortran/SciFortran.git scifor
 cd scifor
 mkdir build
 cd build
-cmake .. -DPREFIX=${PREFIX}/opt
+cmake .. -DPREFIX=${PREFIX}/opt -DCMAKE_SYSROOT="${SYSROOT_DIR}" 
 make -j
 make install
 cd ../../
@@ -39,7 +42,7 @@ git clone https://github.com/edipack/edipack.git edipack
 cd edipack
 mkdir build
 cd build
-cmake .. -DPREFIX=${PREFIX}/opt
+cmake .. -DPREFIX=${PREFIX}/opt -DCMAKE_SYSROOT="${SYSROOT_DIR}" 
 make -j
 make install
 cd ../
