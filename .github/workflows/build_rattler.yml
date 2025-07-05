@@ -18,19 +18,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Conda
-        uses: conda-incubator/setup-miniconda@v2
+      - name: Set up micromamba
+        uses: mamba-org/setup-micromamba@v1
         with:
-          auto-update-conda: true
-          channels: conda-forge, defaults
-          python-version: ${{ matrix.python-version }}
-          miniforge-version: "latest"
+          environment-name: build-env
+          create-args: >-
+            python=${{ matrix.python-version }}
+            rattler-build
+            compilers
+            sysroot_linux-64=2.17
+            cmake
+            make
+          cache-downloads: true
 
-      - name: Create and activate build environment
-        run: |
-          conda create -n build-env python=${{ matrix.python-version }} rattler-build -y
-          echo "CONDA_ENV=build-env" >> $GITHUB_ENV
-          echo "PYTHONVERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Get Latest Tag from edipack
         run: |
@@ -39,18 +39,15 @@ jobs:
           jq -r '.[].ref' | sed 's#refs/tags/##' | sort -V | grep -v v | tail -n 1)
           echo "Latest Tag: $LATEST_TAG"
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+          echo "PYTHONVERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Build Conda Package
         id: build
         run: |
           # Build using the output folder and override the Python variant to the one in the matrix
-          conda init bash
-          if [[ "$RUNNER_OS" == "macOS" ]]; then
-            source ~/.bash_profile
-          else
-            source ~/.bashrc
-          fi
-          conda activate $CONDA_ENV
+          eval "$(micromamba shell hook --shell=bash)"
+          micromamba activate build-env
+
           # Update version in recipe_rattler/recipe.yaml based on OS
           if [[ "$RUNNER_OS" == "macOS" ]]; then
             sed -i '' "3s/0\.0\.1/${LATEST_TAG}/g" recipe_rattler/recipe.yaml
