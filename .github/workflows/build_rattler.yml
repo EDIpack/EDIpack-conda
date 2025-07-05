@@ -18,7 +18,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up micromamba
+      - name: Set up micromamba (Linux)
+        if: runner.os == 'Linux'
         uses: mamba-org/setup-micromamba@v1
         with:
           environment-name: build-env
@@ -27,6 +28,19 @@ jobs:
             rattler-build
             compilers
             sysroot_linux-64=2.17
+            cmake
+            make
+          cache-downloads: true
+
+      - name: Set up micromamba (macOS)
+        if: runner.os == 'macOS'
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-name: build-env
+          create-args: >-
+            python=${{ matrix.python-version }}
+            rattler-build
+            compilers
             cmake
             make
           cache-downloads: true
