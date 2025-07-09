@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 # Set compilers
 export FC=$(which mpif90)
@@ -9,7 +8,7 @@ export CXX=$(which mpicxx)
 SYSROOT_DIR="${CONDA_BUILD_SYSROOT:-$(${CC:-gcc} -print-sysroot)}"
 echo "Sysroot dir: ${SYSROOT_DIR}"
 
-#Create pkg-config directory, if it doesn't exist
+# Create pkg-config directory, if it doesn't exist
 mkdir -p ${PREFIX}/lib/pkgconfig
 
 # Ensure the unlink.d directory exists and copy post-uninstall script
@@ -27,8 +26,10 @@ make -j
 make install
 cd ../../
 
+# Cleanup
 mv ${PREFIX}/etc/scifor.pc ${PREFIX}/lib/pkgconfig/
-rm -rf ${PREFIX}/etc/modules ${PREFIX}/etc/scifor*.sh
+rm -rf ${PREFIX}/etc/modules/scifor ${PREFIX}/etc/scifor*.sh
+rmdir ${PREFIX}/etc/modules
 
 
 # Clone and build EDIpack
@@ -41,17 +42,18 @@ make -j
 make install
 cd ../../
 
-
+# Cleanup
 mv ${PREFIX}/etc/edipack*.pc ${PREFIX}/lib/pkgconfig/
-rm -rf ${PREFIX}/etc/modules ${PREFIX}/etc/edipack*.sh
+rm -rf ${PREFIX}/etc/modules/edipack ${PREFIX}/etc/edipack*.sh
+rmdir ${PREFIX}/etc/modules
 
-#Remove linking string
+#Remove problematic linking string on Linux
 if [[ "$OSTYPE" == "linux"* ]]; then
     sed -i 's|-L/usr/lib/x86_64-linux-gnu||g' "${PREFIX}/lib/pkgconfig/scifor.pc"
 fi
 
 
-#Install edipack2py
+# Install edipack2py
 git clone https://github.com/edipack/edipack2py.git edipack2py
 cd edipack2py
 $PYTHON -m pip install . --prefix=${PREFIX} --no-deps --ignore-installed --no-build-isolation
