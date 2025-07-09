@@ -22,56 +22,31 @@ git clone https://github.com/SciFortran/SciFortran.git scifor
 cd scifor
 mkdir build
 cd build
-cmake .. -DPREFIX=${PREFIX}/opt -DCMAKE_SYSROOT="${SYSROOT_DIR}" 
+cmake .. -DLONG_PREFIX=Off -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_SYSROOT="${SYSROOT_DIR}" 
 make -j
 make install
 cd ../../
 
-for d_scifor in ${PREFIX}/opt/scifor/gnu/*/etc; do
-    if [ -d "$d_scifor" ]; then
-        export PKG_CONFIG_PATH=${d_scifor}:${PKG_CONFIG_PATH}
-        cp ${d_scifor}/scifor.pc ${PREFIX}/lib/pkgconfig/
-    fi
-done
+mv ${PREFIX}/etc/scifor.pc ${PREFIX}/lib/pkgconfig/
+rm -r ${PREFIX}/etc/modules ${PREFIX}/etc/scifor*.sh
 
-export GLOB_INC=$( pkg-config --cflags scifor )
-export GLOB_LIB=$( pkg-config --libs   scifor  | sed  "s/;/ /g"  | sed 's/\\/  /g' )
 
 # Clone and build EDIpack
 git clone https://github.com/edipack/edipack.git edipack
 cd edipack
 mkdir build
 cd build
-cmake .. -DPREFIX=${PREFIX}/opt -DCMAKE_SYSROOT="${SYSROOT_DIR}" 
+cmake .. -DLONG_PREFIX=Off -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_SYSROOT="${SYSROOT_DIR}" 
 make -j
 make install
-cd ../
+cd ../../
 
 
-for d_edipack in ${PREFIX}/opt/edipack/gnu/*/etc; do
-    if [ -d "$d_edipack" ]; then
-        export PKG_CONFIG_PATH=${d_edipack}:${PKG_CONFIG_PATH}
-        cp ${d_edipack}/edipack*.pc ${PREFIX}/lib/pkgconfig/
-    fi
-done
-export GLOB_INC=$( pkg-config --cflags scifor edipack)
-export GLOB_LIB=$( pkg-config --libs   scifor edipack | sed  "s/;/ /g"  | sed 's/\\/  /g' )
+mv ${PREFIX}/etc/edipack*.pc ${PREFIX}/lib/pkgconfig/
+rm -r ${PREFIX}/etc/modules ${PREFIX}/etc/edipack*.sh
 
-
-#Replace ambigouos variable name in the .pc files
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS (BSD sed) requires an explicit '' argument for in-place editing
-    #sed -i '' "1s|prefix|edipack_prefix|g" "${PREFIX}/lib/pkgconfig/edipack.pc"
-    #sed -i '' "s|\${prefix}|\${edipack_prefix}|g" "${PREFIX}/lib/pkgconfig/edipack.pc"
-    sed -i '' "1s|prefix|scifor_prefix|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
-    sed -i '' "s|\${prefix}|\${scifor_prefix}|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
-else
-    # Linux (GNU sed)
-    #sed -i "1s|prefix|edipack_prefix|g" "${PREFIX}/lib/pkgconfig/edipack.pc"
-    #sed -i "s|\${prefix}|\${edipack_prefix}|g" "${PREFIX}/lib/pkgconfig/edipack.pc"
-    sed -i "1s|prefix|scifor_prefix|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
-    sed -i "s|\${prefix}|\${scifor_prefix}|g" "${PREFIX}/lib/pkgconfig/scifor.pc"
-    # Fix for mkl linking
+#Remove linking string
+if [[ "$OSTYPE" == "linux"* ]]; then
     sed -i 's|-L/usr/lib/x86_64-linux-gnu||g' "${PREFIX}/lib/pkgconfig/scifor.pc"
 fi
 
