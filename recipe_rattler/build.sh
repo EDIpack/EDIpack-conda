@@ -28,7 +28,7 @@ make install
 cd ../../
 
 mv ${PREFIX}/etc/scifor.pc ${PREFIX}/lib/pkgconfig/
-rm -r ${PREFIX}/etc/modules ${PREFIX}/etc/scifor*.sh
+rm -rf ${PREFIX}/etc/modules ${PREFIX}/etc/scifor*.sh
 
 
 # Clone and build EDIpack
@@ -43,7 +43,7 @@ cd ../../
 
 
 mv ${PREFIX}/etc/edipack*.pc ${PREFIX}/lib/pkgconfig/
-rm -r ${PREFIX}/etc/modules ${PREFIX}/etc/edipack*.sh
+rm -rf ${PREFIX}/etc/modules ${PREFIX}/etc/edipack*.sh
 
 #Remove linking string
 if [[ "$OSTYPE" == "linux"* ]]; then
