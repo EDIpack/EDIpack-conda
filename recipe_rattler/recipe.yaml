@@ -24,7 +24,8 @@ requirements:
     - wheel
     - meson
     - meson-python
-    - compilers
+    - gcc_linux-64=13.*      # pin compiler to GLIBC 2.17 compatible version
+    - gfortran_linux-64=13.* # pin Fortran compiler
     - openmpi
     - mpi
     - if: linux
