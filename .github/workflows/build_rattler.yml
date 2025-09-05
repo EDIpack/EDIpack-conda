@@ -26,8 +26,7 @@ jobs:
           create-args: >-
             python=${{ matrix.python-version }}
             rattler-build
-            gcc_linux-64>=12,<13
-            gfortran_linux-64>=12,<13
+            compilers
             sysroot_linux-64=2.17
             cmake
             make

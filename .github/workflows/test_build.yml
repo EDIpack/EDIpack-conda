@@ -9,8 +9,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        python-version: ["3.13"]
+        os: [macos-13]
+        python-version: ["3.11"]
     env:
       ANACONDA_API_KEY: ${{ secrets.ANACONDA_API_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -26,8 +26,7 @@ jobs:
           create-args: >-
             python=${{ matrix.python-version }}
             rattler-build
-            gcc_linux-64>=12,<13
-            gfortran_linux-64>=12,<13
+            compilers
             sysroot_linux-64=2.17
             cmake
             make
