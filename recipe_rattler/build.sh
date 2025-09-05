@@ -1,12 +1,13 @@
 #!/bin/bash
 
 # Set compilers
-export FC=$(which mpif90)
-export CC=$(which mpicc)
-export CXX=$(which mpicxx)
+export FC=$(${PREFIX}/bin/mpif90)
+export CC=$(${PREFIX}/bin/mpicc)
+export CXX=$(${PREFIX}/bin/mpicxx)
 
 SYSROOT_DIR="${CONDA_BUILD_SYSROOT:-$(${CC:-gcc} -print-sysroot)}"
 echo "Sysroot dir: ${SYSROOT_DIR}"
+echo "FC: ${FC}"
 
 # Create pkg-config directory, if it doesn't exist
 mkdir -p ${PREFIX}/lib/pkgconfig
