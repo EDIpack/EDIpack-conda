@@ -15,7 +15,7 @@ build:
 
 requirements:
   build:
-    - python 3.13
+    - python 3.13.*
     - compilers
     - gcc_impl_linux-64 13.3.0
     - gfortran_impl_linux-64 13.3.0
@@ -30,7 +30,7 @@ requirements:
     - openmpi
     - mpi
   host:
-    - python={{ python }}
+    - python 3.13.*
     - numpy
     - mpi4py
     - openmpi
