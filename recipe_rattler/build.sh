@@ -1,13 +1,23 @@
 #!/bin/bash
 
 # Set compilers
-export FC=$(${PREFIX}/bin/mpif90)
-export CC=$(${PREFIX}/bin/mpicc)
-export CXX=$(${PREFIX}/bin/mpicxx)
+export FC=${PREFIX}/bin/mpif90
+export CC=${PREFIX}/bin/mpicc
+export CXX=${PREFIX}/bin/mpicxx
+
 
 SYSROOT_DIR="${CONDA_BUILD_SYSROOT:-$(${CC:-gcc} -print-sysroot)}"
 echo "Sysroot dir: ${SYSROOT_DIR}"
 echo "FC: ${FC}"
+
+# Export sysroot flags for linux
+if [[ "$OSTYPE" == "linux"* ]]; then
+  export LDFLAGS="-L${SYSROOT_DIR}/usr/lib -Wl,--dynamic-linker=${SYSROOT_DIR}/lib/ld-linux-x86-64.so.2"
+  export CPPFLAGS="-I${SYSROOT_DIR}/usr/include"
+  export CFLAGS="-I${SYSROOT_DIR}/usr/include"
+  export CXXFLAGS="-I${SYSROOT_DIR}/usr/include"
+  export FCFLAGS="-I${SYSROOT_DIR}/usr/include"
+fi
 
 # Create pkg-config directory, if it doesn't exist
 mkdir -p ${PREFIX}/lib/pkgconfig
@@ -22,7 +32,14 @@ git clone https://github.com/SciFortran/SciFortran.git scifor
 cd scifor
 mkdir build
 cd build
-cmake .. -DLONG_PREFIX=Off -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_SYSROOT="${SYSROOT_DIR}" 
+cmake .. \
+  -DLONG_PREFIX=Off \
+  -DCMAKE_INSTALL_PREFIX=${PREFIX} \
+  -DCMAKE_SYSROOT="${SYSROOT_DIR}" \
+  -DCMAKE_FIND_ROOT_PATH="${SYSROOT_DIR}" \
+  -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER \
+  -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+  -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY
 make -j
 make install
 cd ../../
