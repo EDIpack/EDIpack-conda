@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Set compilers
-export FC=$(which mpif90)
-export CC=$(which mpicc)
-export CXX=$(which mpicxx)
+export FC=${BUILD_PREFIX}/bin/mpif90
+export CC=${BUILD_PREFIX}/bin/mpicc
+export CXX=${BUILD_PREFIX}/bin/mpicxx
 
-SYSROOT_DIR="${CONDA_BUILD_SYSROOT:-$(${CC:-gcc} -print-sysroot)}"
+SYSROOT_DIR="${CONDA_BUILD_SYSROOT:-${BUILD_PREFIX}/sysroot}"
 echo "Sysroot dir: ${SYSROOT_DIR}"
 
 # Create pkg-config directory, if it doesn't exist
@@ -21,7 +21,7 @@ git clone https://github.com/SciFortran/SciFortran.git scifor
 cd scifor
 mkdir build
 cd build
-cmake .. -DLONG_PREFIX=Off -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_SYSROOT="${SYSROOT_DIR}" 
+cmake .. -DCMAKE_SYSROOT="${SYSROOT_DIR}" -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DLONG_PREFIX=Off
 make -j
 make install
 cd ../../
@@ -37,7 +37,7 @@ git clone https://github.com/edipack/edipack.git edipack
 cd edipack
 mkdir build
 cd build
-cmake .. -DLONG_PREFIX=Off -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_SYSROOT="${SYSROOT_DIR}" 
+cmake .. -DCMAKE_SYSROOT="${SYSROOT_DIR}" -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DLONG_PREFIX=Off
 make -j
 make install
 cd ../../
