@@ -15,7 +15,7 @@ build:
 
 requirements:
   build:
-    - python={{ python }}
+    - python=3.13
     - compilers
     - gcc_impl_linux-64=13.*
     - gfortran_impl_linux-64=13.*
