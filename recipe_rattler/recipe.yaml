@@ -15,26 +15,29 @@ build:
 
 requirements:
   build:
-    - python 3.13.*
-    - compilers
-    - gcc_impl_linux-64 ==13.3.0
-    - gfortran_impl_linux-64 ==13.3.0
-    - libgcc-ng ==13.3.0
-    - libgfortran5 ==13.3.0
-    - libstdcxx-ng ==13.3.0
-    - sysroot_linux-64 ==2.17
+    - python=${{ python }
     - cmake
     - make
     - meson
     - meson-python
     - openmpi
     - mpi
+    - if: linux
+      then:    
+      - gcc_impl_linux-64 ==13.3.0
+      - gfortran_impl_linux-64 ==13.3.0
+      - libgcc-ng ==13.3.0
+      - libgfortran5 ==13.3.0
+      - libstdcxx-ng ==13.3.0
+      - sysroot_linux-64 ==2.17
+    - if: osx
+      then:
+        - compilers
   host:
-    - python 3.13.*
+    - python=${{ python }
     - numpy
     - mpi4py
     - openmpi
-    - sysroot_linux-64 ==2.17
     - pkgconfig #the python module
     - meson-python
     - pip
@@ -43,6 +46,7 @@ requirements:
     - mpi4py
     - if: linux
       then:
+        - sysroot_linux-64 ==2.17
         - mkl <2025  # [linux]
         - mkl-devel <2025  # [linux]
         - mkl-include <2025  # [linux]
