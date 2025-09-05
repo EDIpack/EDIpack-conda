@@ -15,30 +15,31 @@ build:
 
 requirements:
   build:
-    - pkg-config
-    - python=${{ python }}
+    - python={{ python }}
+    - compilers
+    - gcc_impl_linux-64=13.*
+    - gfortran_impl_linux-64=13.*
+    - libgcc-ng=13.*
+    - libgfortran5=13.*
+    - libstdcxx-ng=13.*
+    - sysroot_linux-64=2.17
     - cmake
     - make
-    - ninja
-    - setuptools
-    - wheel
     - meson
     - meson-python
-    - compilers
     - openmpi
     - mpi
-    - if: linux
-      then:
-        - libgfortran-ng  # [linux]
   host:
-    - python=${{ python }}
+    - python={{ python }}
+    - numpy
+    - mpi4py
+    - openmpi
+    - sysroot_linux-64=2.17
     - pkgconfig #the python module
     - meson-python
     - pip
     - setuptools
     - wheel
-    - numpy
-    - openmpi
     - mpi4py
     - if: linux
       then:
