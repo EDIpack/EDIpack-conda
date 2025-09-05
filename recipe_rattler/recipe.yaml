@@ -15,7 +15,7 @@ build:
 
 requirements:
   build:
-    - python=${{ python }
+    - python=${{ python }}
     - cmake
     - make
     - meson
@@ -34,7 +34,7 @@ requirements:
       then:
         - compilers
   host:
-    - python=${{ python }
+    - python=${{ python }}
     - numpy
     - mpi4py
     - openmpi
