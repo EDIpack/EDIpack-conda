@@ -16,6 +16,7 @@ build:
 requirements:
   build:
     - python=${{ python }}
+    - compilers
     - cmake
     - make
     - meson
@@ -24,15 +25,7 @@ requirements:
     - mpi
     - if: linux
       then:    
-      - gcc_impl_linux-64 ==13.3.0
-      - gfortran_impl_linux-64 ==13.3.0
-      - libgcc-ng ==13.3.0
-      - libgfortran5 ==13.3.0
-      - libstdcxx-ng ==13.3.0
       - sysroot_linux-64 ==2.17
-    - if: osx
-      then:
-        - compilers
   host:
     - python=${{ python }}
     - numpy
