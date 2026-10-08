@@ -6,13 +6,19 @@ export FC=${BUILD_PREFIX}/bin/mpif90
 export CC=${BUILD_PREFIX}/bin/mpicc
 export CXX=${BUILD_PREFIX}/bin/mpicxx
 
-
-SYSROOT_DIR="${CONDA_BUILD_SYSROOT:-$(${CC:-gcc} -print-sysroot)}"
-echo "Sysroot dir: ${SYSROOT_DIR}"
-
 # Create pkg-config directory, if it doesn't exist
 mkdir -p ${PREFIX}/lib/pkgconfig
-export PKG_CONFIG_LIBDIR="${PREFIX}/lib/pkgconfig:${SYSROOT_DIR}/lib/pkgconfig"
+
+# Sysroot handling: -print-sysroot is GCC-only, so only use it on Linux
+SYSROOT_ARG=""
+if [[ "$OSTYPE" == "linux"* ]]; then
+    SYSROOT_DIR="${CONDA_BUILD_SYSROOT:-$(${CC:-gcc} -print-sysroot)}"
+    echo "Sysroot dir: ${SYSROOT_DIR}"
+    SYSROOT_ARG="-DCMAKE_SYSROOT=${SYSROOT_DIR}"
+    export PKG_CONFIG_LIBDIR="${PREFIX}/lib/pkgconfig:${SYSROOT_DIR}/lib/pkgconfig"
+else
+    export PKG_CONFIG_LIBDIR="${PREFIX}/lib/pkgconfig"
+fi
 
 # Ensure the unlink.d directory exists and copy post-uninstall script
 mkdir -p ${PREFIX}/etc/conda/unlink.d
@@ -24,7 +30,7 @@ git clone https://github.com/SciFortran/SciFortran.git scifor
 cd scifor
 mkdir build
 cd build
-cmake .. -DLONG_PREFIX=Off -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_SYSROOT="${SYSROOT_DIR}" 
+cmake .. -DLONG_PREFIX=Off -DCMAKE_INSTALL_PREFIX=${PREFIX} ${SYSROOT_ARG}
 make -j
 make install
 cd ../../
@@ -40,7 +46,7 @@ git clone https://github.com/edipack/edipack.git edipack
 cd edipack
 mkdir build
 cd build
-cmake .. -DLONG_PREFIX=Off -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_SYSROOT="${SYSROOT_DIR}" 
+cmake .. -DLONG_PREFIX=Off -DCMAKE_INSTALL_PREFIX=${PREFIX} ${SYSROOT_ARG}
 make -j
 make install
 cd ../../
